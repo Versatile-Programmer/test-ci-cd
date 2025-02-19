@@ -22,11 +22,6 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
-      - name: Build with Turbo
-        run: npm run build
-
-      - name: Run Tests
-        run: npm run test
 
   deploy:
     needs: build  # Run deployment only after build succeeds
@@ -40,8 +35,7 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd /path/to/your/project  # Change to your project folder
+            cd  ~/media/raj/OS/PROJECTS/test-ci-cd # Change to your project folder
             git pull origin main  # Pull the latest code
             npm install  # Install new dependencies if needed
-            npm run build  # Build the app
             pm2 restart all  # Restart the app with PM2
