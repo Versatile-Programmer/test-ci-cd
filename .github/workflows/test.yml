@@ -1,15 +1,19 @@
-name: Build on PR
+name: CI/CD Pipeline
 
 on:
   pull_request:
     branches:
       - main
+  push:
+    branches:
+      - main  # Deploy only when code is pushed to main (after PR merge)
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+
       - name: Use Node.js
         uses: actions/setup-node@v3
         with:
@@ -17,5 +21,27 @@ jobs:
       
       - name: Install Dependencies
         run: npm install
-        
-     
+
+      - name: Build with Turbo
+        run: npm run build
+
+      - name: Run Tests
+        run: npm run test
+
+  deploy:
+    needs: build  # Run deployment only after build succeeds
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'  # Only deploy on push to main
+    steps:
+      - name: Deploy to Private Server
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /path/to/your/project  # Change to your project folder
+            git pull origin main  # Pull the latest code
+            npm install  # Install new dependencies if needed
+            npm run build  # Build the app
+            pm2 restart all  # Restart the app with PM2
