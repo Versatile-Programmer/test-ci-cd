@@ -36,7 +36,7 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd  ~/media/raj/OS/PROJECTS/test-ci-cd # Change to your project folder
+            cd /media/raj/OS/PROJECTS/test-ci-cd # Change to your project folder
             git pull origin main  # Pull the latest code
             npm install  # Install new dependencies if needed
             pm2 restart all  # Restart the app with PM2
